@@ -13,12 +13,15 @@ import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+SERVICE_URL_LINE = re.compile(r"(?:AstrBot|NapCat):\s*https?://\S+", re.IGNORECASE)
 
 
 def keys():
     result = {}
     for line in (ROOT / "key.txt").read_text(encoding="utf-8-sig").splitlines():
         if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        if SERVICE_URL_LINE.fullmatch(line.strip()):
             continue
         name, separator, value = line.partition("=")
         if not separator or name.strip() in result:
@@ -46,15 +49,22 @@ def write_json(path, value):
     path.chmod(0o600)
 
 
-def update_keys(updates):
+def update_keys(updates, write_urls=False):
     path = ROOT / "key.txt"
     lines = path.read_text(encoding="utf-8-sig").splitlines()
+    if write_urls:
+        host = keys()["SSH_HOST"]
+        lines = [line for line in lines if not SERVICE_URL_LINE.fullmatch(line.strip())]
     pending = dict(updates)
     for index, line in enumerate(lines):
         name = line.partition("=")[0].strip()
         if not line.lstrip().startswith("#") and name in pending:
             lines[index] = f"{name}={pending.pop(name)}"
     lines.extend(f"{name}={value}" for name, value in pending.items())
+    if write_urls:
+        while lines and not lines[-1].strip():
+            lines.pop()
+        lines.extend(["", f"AstrBot: http://{host}:6185/", f"NapCat:  http://{host}:6099/webui/web_login"])
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     path.chmod(0o600)
 
@@ -298,6 +308,7 @@ def check():
     print(f"AstrBot：http://{k['SSH_HOST']}:6185/", flush=True)
     print(f"NapCat：http://{k['SSH_HOST']}:6099/webui/web_login", flush=True)
     print("QQ 已登录；本次检查未发送 QQ 消息。" if report["qq_logged_in"] else "等待用户用机器人 QQ 扫码登录；未执行 QQ 登录或发送消息。", flush=True)
+    update_keys({}, write_urls=True)
 
 
 if __name__ == "__main__":

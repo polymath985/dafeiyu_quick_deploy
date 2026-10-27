@@ -2,23 +2,23 @@
 
 ## 1. 填写密钥
 
-首次使用，把 `key.example.txt` 复制为 `key.txt`，用记事本以 UTF-8 保存。每行 `名称=值`，不要加引号；密码里有 `=`、`#` 不需要转义。已收到填写好的 `key.txt` 时直接编辑。
+首次使用，把 `key.example.txt` 复制为 `key.txt`，用记事本以 UTF-8 保存。配置字段每行 `名称=值`，按字段名读取，可调整顺序，不要加引号；密码里有 `=`、`#` 不需要转义。已收到填写好的 `key.txt` 时直接编辑。成功后自动写在末尾的两行 URL 仅供查看，读取配置时会忽略。
 
 | 字段 | 怎么填 |
 |---|---|
 | `SSH_HOST` | 服务器公网 IPv4 或域名 |
 | `SSH_USER` | 建议使用 `root`；其他用户需要免密 sudo 权限 |
 | `SSH_PASSWORD` | SSH 登录密码 |
-| `ASTRBOT_USERNAME` | 想设置的 AstrBot 后台账号 |
-| `ASTRBOT_PASSWORD` | 至少 8 位，包含大写、小写字母及数字 |
-| `OWNER_QQ` | 可选，你的大号 QQ；空着时不设置管理员，也不主动私聊 |
 | `DEEPSEEK_API_KEY` | DeepSeek 开放平台 API Key，需有可用额度 |
 | `DEEPSEEK_MODEL` | 默认 `deepseek-flash`；按平台实际提供的模型填写 |
 | `SILICONFLOW_API_KEY` | 可选，用于 `BAAI/bge-m3` 云端记忆；空着跳过记忆 |
 | `DOUBAO_APP_ID` | 可选，火山引擎豆包语音 App ID |
 | `DOUBAO_ACCESS_TOKEN` | 可选，同一语音应用的 Access Token，只填凭证值，不包含 `key:` 标签；不是火山方舟 API Key |
-| `NAPCAT_TOKEN` | 留空，启动并验证后台后自动回填实际 Token |
+| `OWNER_QQ` | 可选，你的大号 QQ；空着时不设置管理员，也不主动私聊 |
 | `ONEBOT_TOKEN` | 留空，自动生成；这是两个容器之间的独立连接凭证 |
+| `ASTRBOT_USERNAME` | 想设置的 AstrBot 后台账号 |
+| `ASTRBOT_PASSWORD` | 至少 8 位，包含大写、小写字母及数字 |
+| `NAPCAT_TOKEN` | 留空，启动并验证后台后自动回填实际 Token |
 
 豆包语音旧版界面：[打开旧版控制台](https://console.volcengine.com/speech/service/10035?AppID=2320335936)。链接中的 `AppID` 为示例，请切换到自己的应用，并填写同一应用的 App ID 和 Access Token。
 
@@ -45,12 +45,16 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 
 成功后，文件位于服务器当前 SSH 用户的 `~/dafeiyu`。只上传 `deploy.sh`、`configure.py`、`compose.yaml`、`pack/` 和填写好的 `key.txt`。SSH 主机身份记录使用 Windows 用户目录下标准的 `.ssh/known_hosts`，不会随部署包分发。
 
-上传完成后，脚本会立即通过 SSH 执行 Ubuntu 部署命令，并在当前 PowerShell 窗口显示进度。部署成功后，自动将 NapCat 和 OneBot Token 同步回本机 `key.txt`。全程保持窗口开启，无需另开 Ubuntu 终端，也无需手动执行部署命令。
+上传完成后，脚本会立即通过 SSH 执行 Ubuntu 部署命令，并在当前 PowerShell 窗口显示进度。部署成功后，自动将 NapCat 和 OneBot Token 同步回本机 `key.txt`，并在文件末尾写入两个后台的实际 URL，地址取自 `SSH_HOST`。重复运行会更新这两行，不会累积重复地址。全程保持窗口开启，无需另开 Ubuntu 终端，也无需手动执行部署命令。
 
-重装服务器系统后，SSH 主机密钥会变化。如果同一 IP 提示 `REMOTE HOST IDENTIFICATION HAS CHANGED`，确认是自己重装的服务器后，运行以下命令删除该 IP 的旧记录，再重试上传：
+脚本会在上传前检查服务器的 ED25519 主机密钥。首次连接自动保存；已保存的密钥一致时直接继续。重装系统后密钥发生变化，或之前只保存过其他类型的密钥时，脚本会显示旧、新 SHA256 指纹，要求输入 `YES` 确认。确认后自动备份为 `known_hosts.old`、刷新该服务器记录并继续部署；直接回车则退出，保留原记录。
 
-```powershell
-ssh-keygen -R 你的服务器IP
+主机密钥探测不发送 SSH 密码或客户端私钥；正式上传和连接会严格校验已保存的公钥。
+
+可在阿里云服务器控制台的远程终端中执行以下命令核对新指纹，再回到本地确认：
+
+```bash
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub -E sha256
 ```
 
 ## 3. 登录后台并扫码
@@ -61,7 +65,7 @@ Ubuntu 软件包使用阿里云源，Docker 安装包使用南大镜像源。首
 
 服务器部署时会生成 `data/`、`napcat/` 和 `state/`，分别存放机器人数据、QQ 会话及部署状态。这些运行数据不包含在发布包中，每位用户部署时自行生成。
 
-完成后打开：
+完成后，可直接使用本机 `key.txt` 末尾的 URL 打开后台：
 
 - AstrBot：`http://你的服务器IP:6185/`，使用 `key.txt` 中的 AstrBot 账号密码。
 - NapCat：`http://你的服务器IP:6099/webui/web_login`，使用自动回填到本机 `key.txt` 的 `NAPCAT_TOKEN`。

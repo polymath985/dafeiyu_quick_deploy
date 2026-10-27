@@ -10,7 +10,7 @@
 
 ## 密钥约定
 
-`key.txt` 是 UTF-8 的 `名称=值` 文本，按第一个等号分隔，忽略空行和 `#` 开头的注释。值无需引号或 shell 转义。**不要 source/eval 此文件，不把密码/Token 放进 shell 参数、聊天、录屏或日志。** 读取时只报告某字段是否已提供，不打印内容。只分享 `key.example.txt`，不分享实际 `key.txt`。
+`key.txt` 是 UTF-8 的 `名称=值` 文本，按第一个等号分隔，按字段名读取，字段顺序不影响部署。忽略空行、`#` 开头的注释及末尾 `AstrBot: http://...`、`NapCat: http://...` 两行展示用 URL。值无需引号或 shell 转义。**不要 source/eval 此文件，不把密码/Token 放进 shell 参数、聊天、录屏或日志。** 读取时只报告某字段是否已提供，不打印内容。只分享 `key.example.txt`，不分享实际 `key.txt`。
 
 - SSH 只读取 `SSH_HOST/SSH_USER/SSH_PASSWORD`，固定使用默认端口 22 和密码登录，用户无需填写端口。
 - `OWNER_QQ` 允许留空；此时继续部署，不猜号码，不把机器人号码当主人，也不授予任何人管理员权限，主动私聊暂不启用。
@@ -33,7 +33,7 @@
    rm -f ~/dafeiyu-upload.tar.gz
    ```
 
-   SSH 主机密钥验证必须保留，使用 Windows 用户目录下标准的 `.ssh/known_hosts`，不在项目中创建或分发主机记录。自动密码助手只回答密码请求，不回答主机密钥确认；首次连接采用 `accept-new`。用户确认重装了同一 IP 的服务器时，核对新指纹后用 `ssh-keygen -R 服务器IP` 移除该 IP 的旧记录，再重新连接。
+   SSH 主机密钥验证必须保留，使用 Windows 用户目录下标准的 `.ssh/known_hosts`，不在项目中创建或分发主机记录。Windows 入口先通过禁用凭证认证的 SSH 握手在临时目录获取 ED25519 公钥：首次保存、匹配时继续；密钥变化或仅有其他类型记录时，显示旧、新 SHA256 指纹并要求用户输入 `YES`，确认后备份 `known_hosts.old`、更新该服务器记录并继续。实际连接使用严格验证和 ED25519；探测失败、用户取消时不更改记录。自动密码助手仍只回答密码请求，不回答主机密钥确认。agent 不得自动代填 `YES`；用户可通过阿里云控制台运行 `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub -E sha256` 核对指纹。
 4. 采用上一步手工传输方式时，在 Ubuntu 运行：
 
    ```bash
@@ -53,7 +53,7 @@
 5. 首次下载通常耗时较长，按 `[1/5]` 至 `[5/5]` 输出判断进度。Ubuntu 软件源使用阿里云，Docker 安装包使用南大镜像，容器镜像使用 DaoCloud 后回退官方源；签名、摘要、TLS 校验不能关闭。失败后先看实际错误，修正网络问题再重跑同一脚本。不要反复删除数据或重新创建容器来尝试 QQ 登录。
 6. 提醒用户在阿里云安全组放行 TCP 6099、6185。脚本会在已启用的 UFW 上放行这两个端口，保留原有规则；云安全组需要用户或已有云工具处理。无需公网开放 6199。
 7. 运行 `sudo bash deploy.sh --check`。检查两个后台可用、预期插件激活、没有加载失败、OneBot 地址/Token 一致、NapCat Token 与服务器 `key.txt` 一致。`state/verification.json` 保存检查结果，不包含密钥。`state/` 与 `data/`、`napcat/` 都是在服务器运行时生成的目录，不在发布包中携带历史数据。
-8. Windows 一键入口会在部署成功后自动回填 Token。手工部署或需要重新同步时，再运行 `powershell -NoProfile -ExecutionPolicy Bypass -File .\upload.ps1 -SyncKey`。用 SFTP 的 agent 可下载服务器 `key.txt` 到私人临时路径，再仅合并 `NAPCAT_TOKEN`、`ONEBOT_TOKEN` 两行；不要覆盖本机其他新编辑的字段。完成后校验本地值与服务器当前配置相同，只报告相同与否，不打印值。
+8. Windows 一键入口会在部署成功后自动回填 Token，并在本机 `key.txt` 末尾写入 `AstrBot: http://SSH_HOST:6185/`、`NapCat:  http://SSH_HOST:6099/webui/web_login`，其中 `SSH_HOST` 替换为实际服务器地址。服务器完成检查后也会更新其 `key.txt` 末尾的 URL；重复执行应替换旧地址，避免重复追加。手工部署或需要重新同步时，再运行 `powershell -NoProfile -ExecutionPolicy Bypass -File .\upload.ps1 -SyncKey`。用 SFTP 的 agent 可下载服务器 `key.txt` 到私人临时路径，再仅合并 `NAPCAT_TOKEN`、`ONEBOT_TOKEN` 并刷新末尾 URL；不要覆盖本机其他新编辑的字段或排列顺序。完成后校验本地值与服务器当前配置相同，只报告相同与否，不打印值。
 9. 向用户给出 `http://服务器IP:6185/` 和 `http://服务器IP:6099/webui/web_login`，说明 AstrBot 登录使用已填账号密码、NapCat 使用 `key.txt` 中的 `NAPCAT_TOKEN`，并提示现在自行扫码。
 
 ## 验收边界
