@@ -1,0 +1,27 @@
+# UTF-8 编码。每行 名称=值；直接填写，不加引号。不要公开本文件。
+# SSH 登录：填写服务器地址、用户名和密码，固定使用默认端口 22。
+SSH_HOST=
+SSH_USER=root
+SSH_PASSWORD=
+
+# AstrBot 后台账号密码（自行设置，勿沿用公开默认密码）。
+ASTRBOT_USERNAME=astrbot
+ASTRBOT_PASSWORD=
+# 你的大号 QQ，可暂空（管理员和主动私聊暂不启用）；机器人小号不填，稍后自行扫码。
+OWNER_QQ=
+
+# DeepSeek API Key；模型可在 DeepSeek 控制台确认。
+DEEPSEEK_API_KEY=
+DEEPSEEK_MODEL=deepseek-flash
+# 硅基流动：BAAI/bge-m3 向量记忆。不启用记忆可留空。
+SILICONFLOW_API_KEY=
+
+# 豆包语音：两项均填才启用语音和唱歌；任一为空均自动跳过。
+DOUBAO_APP_ID=
+# 只填 Access Token 本身，不包含 key: 等字段标签。
+DOUBAO_ACCESS_TOKEN=
+
+# 自动回填，请保留字段。NapCat Token 是网页后台的登录凭证。
+NAPCAT_TOKEN=
+# AstrBot 与 NapCat 内网连接的独立凭证，无需手填。
+ONEBOT_TOKEN=

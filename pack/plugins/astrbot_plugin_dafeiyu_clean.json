@@ -1,0 +1,5 @@
+{
+  "name": "astrbot_plugin_dafeiyu_clean",
+  "what": "发出去前删掉模型偶尔漏出的内部标签",
+  "always_reinstall": true
+}

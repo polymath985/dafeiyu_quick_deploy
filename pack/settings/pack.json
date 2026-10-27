@@ -1,0 +1,160 @@
+{
+  "说明": "全新 Ubuntu 部署配置：人格、插件、表情包、可选云端记忆和豆包语音。",
+  "persona": {
+    "id": "大肥鱼",
+    "file": "persona/大肥鱼.md"
+  },
+  "base": {
+    "provider_settings.identifier": true,
+    "provider_settings.computer_use_runtime": "none",
+    "provider_settings.datetime_system_prompt": true,
+    "platform_settings.segmented_reply.enable": true,
+    "platform_settings.segmented_reply.only_llm_result": true,
+    "platform_settings.segmented_reply.split_mode": "regex",
+    "platform_settings.segmented_reply.regex": ".*?(?:\\r?\\n+|[。？！~…]+)|.+$",
+    "platform_settings.segmented_reply.split_words": [
+      "。",
+      "？",
+      "！",
+      "~",
+      "…"
+    ],
+    "platform_settings.empty_mention_waiting": false,
+    "provider_ltm_settings.active_reply.enable": false,
+    "agent_runner.config.compression.max_turns": 30,
+    "agent_runner.config.persona.persona_id": "大肥鱼"
+  },
+  "chat_model": {
+    "custom_extra_body": {
+      "thinking": {
+        "type": "disabled"
+      }
+    }
+  },
+  "plugins": [
+    {
+      "market_id": "Him666233/astrbot_plugin_group_chat_plus",
+      "name": "astrbot_plugin_group_chat_plus",
+      "what": "群聊里像真人一样偶尔插话、打字有停顿",
+      "config": {
+        "enable_group_chat": true,
+        "enable_private_chat": false,
+        "initial_probability": 0.02,
+        "after_reply_probability": 0.8,
+        "probability_duration": 120,
+        "max_context_messages": 50,
+        "poke_reverse_on_poke_probability": 0.25,
+        "enable_typing_simulator": true,
+        "typing_speed": 15.0,
+        "typing_max_delay": 3.0,
+        "enable_typo_generator": true,
+        "typo_error_rate": 0.02,
+        "enable_proactive_chat": false,
+        "enable_memory_injection": false,
+        "enable_web_panel": false
+      }
+    },
+    {
+      "market_id": "lxfight/astrbot_plugin_livingmemory",
+      "name": "astrbot_plugin_livingmemory",
+      "what": "长期记忆，需要先选一种记忆方式",
+      "config": {
+        "provider_settings.llm_provider_id": "{对话模型}",
+        "session_manager.context_window_size": 50,
+        "reflection_engine.summary_trigger_rounds": 10
+      }
+    },
+    {
+      "market_id": "anka/meme_manager",
+      "name": "meme_manager",
+      "what": "发表情包",
+      "config": {
+        "semantic.enabled": false,
+        "generation.emotion.llm.enabled": false,
+        "generation.trigger.scope": "only_chat_llm",
+        "generation.prompt.quantity_guidance_enabled": true,
+        "generation.emotion.probability": 35,
+        "generation.emotion.max_memes_per_message": 1
+      }
+    },
+    {
+      "market_id": "Zhalslar/astrbot_plugin_qzone",
+      "name": "astrbot_plugin_qzone",
+      "what": "发 QQ 空间说说（只有主人让她发才发）",
+      "config": {
+        "trigger.publish_cron": "",
+        "trigger.comment_cron": ""
+      }
+    },
+    {
+      "market_id": "Zhalslar/astrbot_plugin_qqprofile",
+      "name": "astrbot_plugin_qqprofile",
+      "what": "改 QQ 签名、昵称、头像（只听主人的）",
+      "config": {}
+    },
+    {
+      "market_id": "DBJD-CR/astrbot_plugin_proactive_chat",
+      "name": "astrbot_plugin_proactive_chat",
+      "what": "隔一阵主动找你聊天，凌晨 1 点到 7 点不打扰",
+      "config": {
+        "friend_settings.enable": true,
+        "friend_settings.session_list": [
+          "{主人会话}"
+        ],
+        "friend_settings.auto_trigger_settings.enable_auto_trigger": true,
+        "friend_settings.schedule_settings.quiet_hours": "1-7",
+        "friend_settings.tts_settings.enable_tts": false,
+        "group_settings.enable": false,
+        "web_admin.enabled": false,
+        "notification_settings.enabled": false,
+        "telemetry_config.enabled": false
+      }
+    }
+  ],
+  "tool_permissions": {
+    "llm_publish_feed": "admin",
+    "llm_view_feed": "admin",
+    "set_signature": "admin"
+  },
+  "meme_packs": [
+    {
+      "id": "blue-fat-fish-meme-pack",
+      "default": true,
+      "use": true
+    },
+    {
+      "id": "deepseek-fanart-meme-pack",
+      "default": false,
+      "use": true
+    }
+  ],
+  "memory": {
+    "siliconflow": {
+      "id": "大肥鱼记忆-硅基流动",
+      "embedding_api_base": "https://api.siliconflow.cn/v1",
+      "embedding_model": "BAAI/bge-m3"
+    },
+    "embedding_dimensions": 1024
+  },
+  "voice": {
+    "trigger_probability": 0.33,
+    "doubao": {
+      "id": "大肥鱼语音-豆包",
+      "plugin": "astrbot_plugin_seed_audio_tts",
+      "api_base": "https://openspeech.bytedance.com/api/v3/tts/create",
+      "resource_id": "seed-audio-1.0",
+      "model": "seed-audio-1.0",
+      "persona": "一个憨萌软糯的小女生，声音甜甜的、有点奶，十几岁的感觉，嘴馋爱撒娇，带一点小傲娇",
+      "prompt_template": "{persona}，在QQ上给好朋友发语音，语气轻快自然，只说引号里的这句话，一字不差：“{text}”",
+      "format": "mp3",
+      "sample_rate": 24000,
+      "max_attempts": 2,
+      "whole_reply": true,
+      "timeout": 60
+    }
+  },
+  "sing": {
+    "说明": "唱歌插件 astrbot_plugin_dafeiyu_sing：启用豆包语音时才安装，使用同一套豆包凭证在云端唱歌，无需另开服务。",
+    "backend": "doubao"
+  }
+}

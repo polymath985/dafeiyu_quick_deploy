@@ -1,0 +1,8 @@
+name: astrbot_plugin_dafeiyu_signature
+display_name: 大肥鱼改签名
+desc: 让机器人自己改 QQ 个性签名：主人用大白话叫她改，或者她心情变了自己改（一天最多自己改两次）
+help: 跟它说「把签名改成……」「换个签名」；被夸了、委屈了、主人生日，她也可能自己改
+version: v0.1.3
+author: zexuan604
+support_platforms:
+  - aiocqhttp

@@ -1,0 +1,49 @@
+name: dafeiyu-video
+
+services:
+  astrbot:
+    image: ${ASTRBOT_IMAGE:-dafeiyu-video/astrbot:4.29.3}
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 60s
+    environment:
+      TZ: Asia/Shanghai
+      PIP_INDEX_URL: https://mirrors.aliyun.com/pypi/simple/
+      UV_INDEX_URL: https://mirrors.aliyun.com/pypi/simple/
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+    ports:
+      - "6185:6185"
+    volumes:
+      - ./data:/AstrBot/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  napcat:
+    image: ${NAPCAT_IMAGE:-dafeiyu-video/napcat:4.18.41}
+    hostname: dafeiyu-qq
+    mac_address: ${NAPCAT_MAC}
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
+    environment:
+      TZ: Asia/Shanghai
+      NAPCAT_UID: "1000"
+      NAPCAT_GID: "1000"
+      MODE: astrbot
+    ports:
+      - "6099:6099"
+    volumes:
+      - ./data:/AstrBot/data
+      - ./napcat/config:/app/napcat/config
+      - ./napcat/qq:/app/.config/QQ
+      - ./napcat/plugins:/app/napcat/plugins
+      - ./napcat/machine-id:/etc/machine-id:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

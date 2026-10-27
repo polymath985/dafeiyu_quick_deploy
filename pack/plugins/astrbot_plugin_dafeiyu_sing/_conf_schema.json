@@ -1,0 +1,25 @@
+{
+  "backend": {
+    "description": "用哪个模型唱",
+    "type": "string",
+    "options": ["doubao"],
+    "hint": "豆包 Seed Audio 云端，用发语音那套豆包凭证，不用另开服务；唱的是她自编的小调，不照原曲调子。",
+    "default": "doubao"
+  },
+  "doubao_app_id": {
+    "description": "豆包语音 APP ID（留空就用语音提供商「豆包 Seed Audio」那套）",
+    "type": "string",
+    "default": ""
+  },
+  "doubao_access_token": {
+    "description": "豆包语音 Access Token（留空就用语音提供商那套）",
+    "type": "string",
+    "default": ""
+  },
+  "doubao_tries": {
+    "description": "豆包最多抽几次",
+    "type": "int",
+    "hint": "唱出来的字和歌词对不上八成才再抽一次；每抽一次都按时长收钱",
+    "default": 2
+  }
+}

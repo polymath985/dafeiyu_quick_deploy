@@ -1,0 +1,30 @@
+{
+  "owner_session": {
+    "description": "主人的私聊会话",
+    "type": "string",
+    "hint": "形如 机器人名:FriendMessage:主人QQ号，导入工具会自动填。只有这个会话里、或者管理员发的消息，她才会改签名",
+    "default": ""
+  },
+  "daily_self_limit": {
+    "description": "她一天最多自己改几次",
+    "type": "int",
+    "hint": "主人叫她改的不算在里面",
+    "default": 2
+  },
+  "daily_owner_limit": {
+    "description": "主人叫她改，一天最多几次",
+    "type": "int",
+    "default": 10
+  },
+  "max_length": {
+    "description": "签名最多几个字",
+    "type": "int",
+    "default": 40
+  },
+  "self_change_hint": {
+    "description": "主人夸她、骂她、说生日时，提醒她顺手改签名",
+    "type": "bool",
+    "hint": "不开的话，她自己改签名全靠人设，很少主动改",
+    "default": true
+  }
+}

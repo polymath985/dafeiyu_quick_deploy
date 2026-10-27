@@ -1,0 +1,6 @@
+{
+  "name": "astrbot_plugin_seed_audio_tts",
+  "what": "豆包 Seed Audio 语音提供商（只在语音选 3 时装，每次导入都重装成配置包里的版本）",
+  "only_with_voice": "3",
+  "always_reinstall": true
+}

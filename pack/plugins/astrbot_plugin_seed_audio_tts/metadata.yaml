@@ -1,0 +1,7 @@
+name: astrbot_plugin_seed_audio_tts
+display_name: 豆包 Seed Audio 语音
+desc: 给 AstrBot 加一个「豆包音频生成模型 1.0（seed-audio-1.0）」语音合成提供商：用一句话描述人设和语气，模型照着念；每次用返回的逐字字幕核对台词，对不上就重试，再不对就改发文字。
+help: 装好后到「模型提供商 → 语音合成」新增类型 seed_audio_tts，填火山引擎豆包语音控制台的 APP ID 和 Access Token。
+version: v0.2.0
+author: dafeiyu-pack
+repo: ""

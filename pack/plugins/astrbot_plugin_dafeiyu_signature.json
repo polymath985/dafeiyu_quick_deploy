@@ -1,0 +1,8 @@
+{
+  "name": "astrbot_plugin_dafeiyu_signature",
+  "what": "自己改 QQ 签名：主人叫她改，或者她心情变了",
+  "always_reinstall": true,
+  "config": {
+    "owner_session": "{主人会话}"
+  }
+}

@@ -1,0 +1,7 @@
+key.txt
+state/
+.env
+data/
+napcat/
+__pycache__/
+*.pyc
