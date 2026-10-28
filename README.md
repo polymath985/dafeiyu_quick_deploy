@@ -73,3 +73,6 @@ Ubuntu 软件包使用阿里云源，Docker 安装包使用南大镜像源。首
 脚本不会把 Token 打印到录屏终端。**此时 QQ 尚未登录是正常状态**。用户进入 NapCat 后，用机器人小号的手机 QQ 扫码、按腾讯提示确认。二维码失效就在网页刷新。随后从自己的 QQ 发一句话测试回复。
 
 部署报错时，按终端提示修正后重跑同一个命令。需要单独连接服务器或重新同步 Token 时，可分别给 `upload.ps1` 加上 `-Connect` 或 `-SyncKey`；正常部署会自动完成 Token 同步。
+
+身份验证信息失效，不使用国家数字身份认证平台解封链接（在小号QQ中通过发消息打开）
+https://accounts.qq.com/safe/message/unlock/verify?punish_id=10201&reason=12
